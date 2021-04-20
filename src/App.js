@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { UserDetails } from './pages/User-details';
 import Logo from './assets/logo.png'
+import Notification from './assets/notification.png'
 
 
 
@@ -19,12 +20,13 @@ function App() {
           <span className="title_text">
             St. Marry's Hospital
           </span>
-          
+
         </div>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: "center"}}>
-        <button className="new_button">
+        <div className="utils_container">
+          <button className="new_button">
             + New Patient
           </button>
+          <img src={Notification} className='notification'/>
         </div>
       </header>
       <Switch>

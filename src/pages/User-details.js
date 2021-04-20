@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,6 +13,8 @@ import './User-details.css';
 
 export const UserDetails = props => {
 
+    const [filePreview, setFilePreview] = useState('');
+
     const useStyles = makeStyles({
         table: {
           minWidth: 650,
@@ -25,7 +27,8 @@ export const UserDetails = props => {
     const { data } = props.location;
 
     const onFilesChange = (files) => {
-        console.log(files)
+        console.log(files);
+        setFilePreview(files[0]['preview']['url']);
     }
 
     const onFilesError = (error, file) => {
@@ -71,6 +74,7 @@ export const UserDetails = props => {
                         </Table>
                     </TableContainer>
                 </div>
+                <img src={filePreview} className="preview"/>
             </div>
             <div className="files">
                 <Files

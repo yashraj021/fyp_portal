@@ -53,3 +53,16 @@
 .new_button:hover {
   cursor: pointer;
 }
+
+.notification {
+  height: 20px;
+  width: 20px;
+  float: right;
+}
+
+.utils_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-right: 20px;
+}

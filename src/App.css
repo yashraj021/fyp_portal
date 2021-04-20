@@ -37,6 +37,10 @@
   font-weight: bold;
 }
 
+.title_text:hover{
+  cursor: pointer;
+}
+
 .logo {
   height: 50px;
   width: 110px;

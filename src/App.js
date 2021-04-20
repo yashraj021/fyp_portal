@@ -3,7 +3,8 @@ import { TablePage } from './pages/Table-page';
 import {
   Switch,
   Route,
-  Link
+  Link,
+  useHistory
 } from "react-router-dom";
 import { UserDetails } from './pages/User-details';
 import Logo from './assets/logo.png'
@@ -12,12 +13,13 @@ import Notification from './assets/notification.png'
 
 
 function App() {
+  const history = useHistory();
   return (
     <div className="App">
       <header className="header-main">
         <div className="title">
           <img src={Logo} className="logo" />
-          <span className="title_text">
+          <span className="title_text" onClick={() => history.push('/')}>
             St. Marry's Hospital
           </span>
 

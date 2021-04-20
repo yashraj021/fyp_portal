@@ -9,11 +9,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useParams } from 'react-router-dom';
 import Files from 'react-files'
+import Loader from "react-loader-spinner";
 import './User-details.css';
 
 export const UserDetails = props => {
 
     const [filePreview, setFilePreview] = useState('');
+    const [covRes, setCovRes] = useState('');
+    const [loading,setLoading] = useState(false);
 
     const useStyles = makeStyles({
         table: {
@@ -26,18 +29,25 @@ export const UserDetails = props => {
     const { id } = useParams();
     const { data } = props.location;
 
-    const onFilesChange = (files) => {
-        console.log(files);
+    const onFilesChange = async (files) => {
         setFilePreview(files[0]['preview']['url']);
+        let formData = new FormData();
+
+        formData.append("mediaContent", files[0]);
+        setLoading(true);
+        const response = await fetch('http://localhost:3001/predict', {method: "POST", body: formData});
+        const data = await response.json();
+        const {result} = data;
+        if(result.result==0){
+            setCovRes("Positive");
+        }else setCovRes("Negative");
+        setLoading(false);
+        console.log(result, covRes)
     }
 
     const onFilesError = (error, file) => {
         console.log('error code ' + error.code + ': ' + error.message)
     };
-
-    console.log(props.location.data)
-
-
 
     return (
         <div className="user-details__main">
@@ -65,7 +75,7 @@ export const UserDetails = props => {
                                     <TableCell >{data.email}</TableCell>
                                     <TableCell >{data.sex}</TableCell>
                                     <TableCell >{data.phone}</TableCell>
-                                    <TableCell >{data.result}</TableCell>
+                                    <TableCell >{covRes ||  data.result}</TableCell>
                                     <TableCell >
                                     </TableCell>
                                 </TableRow>
@@ -76,12 +86,25 @@ export const UserDetails = props => {
                 </div>
                 <img src={filePreview} className="preview"/>
             </div>
+
             <div className="files">
-                <Files
+            {
+                loading && (
+                    <Loader
+                    type="Puff"
+                    color="#00BFFF"
+                    height={150}
+                    width={150}
+                    />
+                )
+            }
+            {
+                !loading && (
+                    <Files
                     className='files-dropzone'
                     onChange={onFilesChange}
                     onError={onFilesError}
-                    accepts={['image/png', '.pdf', 'audio/*']}
+                    accepts={['image/*']}
                     multiple
                     maxFileSize={10000000}
                     minFileSize={0}
@@ -89,6 +112,9 @@ export const UserDetails = props => {
                 >
                     Drop files here or click to upload
                 </Files>
+                )
+            }
+               
             </div>
         </div>
     );

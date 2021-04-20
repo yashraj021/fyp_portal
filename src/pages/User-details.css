@@ -1,0 +1,31 @@
+.user-details__main {
+    margin: 50px 50px;
+    width: 50vw;
+    height: 90vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-details__details {
+    flex: 2;
+    background-color: rgb(255, 255, 255);
+}
+
+.files {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(211, 211, 211);
+}
+
+.user-details__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-details__detail {
+    height: 50px;
+}

@@ -7,6 +7,9 @@ export const TablePage = () => {
 
     return (
         <div className="main-area">
+            <span className="main-title">
+                Patient List
+            </span>
             <BasicTable data={dataset} />
         </div>
     );

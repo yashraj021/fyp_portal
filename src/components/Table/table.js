@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -15,62 +15,35 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(id, name, address, email, sex, phone, result) {
-  return {id, name, address, email, sex, phone, result };
-}
-
-
-
 export const BasicTable = ({data}) => {
-
-  const [rows, setRows] = useState([]);
-
-  useEffect(
-    () => {
-      data.forEach(row => {
-        const obj= createData(
-          row.id,
-          row.name,
-          row.address.city,
-          row.email,
-          row.sex,
-          row.phone,
-          row.result
-          );
-        setRows(prev => [...prev, obj])
-      })
-    },
-  [data])
-
-  console.log(data)
   const classes = useStyles();
-
+  const getPrintableDate = (dateString) => {
+    const primitive = Date(dateString);
+    const date = new Date(primitive);
+    return date.toLocaleString();
+  }
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell >Address</TableCell>
-            <TableCell >E-mail</TableCell>
-            <TableCell >Gender</TableCell>
-            <TableCell >Phone</TableCell>
-            <TableCell >Result</TableCell>
-            <TableCell >Actions</TableCell>
+            <TableCell>Address</TableCell>
+            <TableCell>E-mail</TableCell>
+            <TableCell>Updated At</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell >{row.address}</TableCell>
-              <TableCell >{row.email}</TableCell>
-              <TableCell >{row.sex}</TableCell>
-              <TableCell >{row.phone}</TableCell>
-              <TableCell >{row.result}</TableCell>
-              <TableCell >
+          {data.map((row) => (
+            <TableRow key={row._id}>
+              <TableCell component="th" scope="row">{row.userId?.name}</TableCell>
+              <TableCell>{row.userId?.address}</TableCell>
+              <TableCell>{row.userId?.email}</TableCell>
+              <TableCell>{getPrintableDate(row.updatedAt)}</TableCell>
+              <TableCell>{row.status}</TableCell>
+              <TableCell>
                 <Link to={{
                   pathname: `/users/${row.id}`,
                   data: row
@@ -78,7 +51,7 @@ export const BasicTable = ({data}) => {
                   View
                 </Link>
               </TableCell>
-              
+
             </TableRow>
           ))}
         </TableBody>

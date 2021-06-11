@@ -35,7 +35,7 @@ export const UserDetails = props => {
 
         formData.append("mediaContent", files[0]);
         setLoading(true);
-        const response = await fetch('http://localhost:3001/predict', {method: "POST", body: formData});
+        const response = await fetch('http://localhost:3005/predict', {method: "POST", body: formData});
         const data = await response.json();
         const {result} = data;
         if(result.result==0){
@@ -114,7 +114,7 @@ export const UserDetails = props => {
                 </Files>
                 )
             }
-               
+
             </div>
         </div>
     );

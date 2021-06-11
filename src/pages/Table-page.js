@@ -1,16 +1,41 @@
 import React from 'react';
 import {BasicTable} from '../components/Table/table';
-import dataset from '../utils/fake-data.json';
 import './table-page.css'
+import {getTests} from "../api/user";
 
-export const TablePage = () => {
+export default class TablePage extends React.Component {
 
+  state = {
+    patientList: []
+  }
+
+  async componentDidMount() {
+    const res = await getTests();
+    if(res){
+      this.setState({patientList:res.tests})
+    }
+  }
+
+  render() {
     return (
-        <div className="main-area">
+      <div className="main-area">
             <span className="main-title">
                 Patient List
             </span>
-            <BasicTable data={dataset} />
-        </div>
+        {
+          this.state.patientList.length===0 && (
+            <span className="main-title">
+                No registered users
+            </span>
+          )
+        }
+        {
+          this.state.patientList.length!==0 && (
+            <BasicTable data={this.state.patientList}/>
+          )
+        }
+      </div>
     );
+  }
+
 }

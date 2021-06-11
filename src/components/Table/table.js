@@ -8,20 +8,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {Link} from 'react-router-dom';
+import {getPrintableDate} from "../../utils";
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    minWidth: '80vw',
   },
 });
 
 export const BasicTable = ({data}) => {
   const classes = useStyles();
-  const getPrintableDate = (dateString) => {
-    const primitive = Date(dateString);
-    const date = new Date(primitive);
-    return date.toLocaleString();
-  }
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
@@ -38,14 +34,17 @@ export const BasicTable = ({data}) => {
         <TableBody>
           {data.map((row) => (
             <TableRow key={row._id}>
-              <TableCell component="th" scope="row">{row.userId?.name}</TableCell>
+              <TableCell component="th" scope="row" style={{display:'flex','alignItems':'center' }}>
+                <img src={row.userId?.picture} height={35} width={35} style={{borderRadius:'50%', marginRight:8}}/>
+                {row.userId?.name}
+              </TableCell>
               <TableCell>{row.userId?.address}</TableCell>
               <TableCell>{row.userId?.email}</TableCell>
               <TableCell>{getPrintableDate(row.updatedAt)}</TableCell>
               <TableCell>{row.status}</TableCell>
               <TableCell>
                 <Link to={{
-                  pathname: `/users/${row.id}`,
+                  pathname: `/users/${row._id}`,
                   data: row
                 }}>
                   View

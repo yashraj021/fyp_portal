@@ -1,4 +1,4 @@
-import axios, { validateResponseCode } from "./config";
+import axios, {validateResponseCode} from "./config";
 
 export const getFileExtension = (path) =>
   path.slice(((path.lastIndexOf(".") - 1) >>> 0) + 2);
@@ -51,6 +51,18 @@ export const submitTest = async (hospitalId) => {
   }
 };
 
+export const uploadXray = async (testId, body) => {
+  try {
+    const url = `/user/uploadXray/${testId}`;
+    let response = await axios.put(url, body);
+    if (validateResponseCode(response.status)) {
+      return response.data;
+    } else return false;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
 // export const submitTest = async (path,hospitalId, token) => {
 //   try {
 //     let fileExtension = getFileExtension(path);

@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -7,115 +6,124 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { useParams } from 'react-router-dom';
 import Files from 'react-files'
 import Loader from "react-loader-spinner";
 import './User-details.css';
+import {getPrintableDate} from "../utils";
+import {uploadXray} from "../api/user";
 
-export const UserDetails = props => {
 
-    const [filePreview, setFilePreview] = useState('');
-    const [covRes, setCovRes] = useState('');
-    const [loading,setLoading] = useState(false);
+const classes = {
+  table: {
+    minWidth: '80vw',
+  },
+};
 
-    const useStyles = makeStyles({
-        table: {
-          minWidth: 650,
-        },
-      });
+export class UserDetails extends React.Component {
 
-    const classes = useStyles();
+  state = {
+    filePreview: '',
+    loading: false,
+    data: null
+  }
 
-    const { id } = useParams();
-    const { data } = props.location;
 
-    const onFilesChange = async (files) => {
-        setFilePreview(files[0]['preview']['url']);
-        let formData = new FormData();
+  componentDidMount() {
+    // const {id} = useParams();
+    const {data} = this.props.location;
+    this.setState({data});
+  }
 
-        formData.append("mediaContent", files[0]);
-        setLoading(true);
-        const response = await fetch('http://localhost:3005/predict', {method: "POST", body: formData});
-        const data = await response.json();
-        const {result} = data;
-        if(result.result==0){
-            setCovRes("Positive");
-        }else setCovRes("Negative");
-        setLoading(false);
-        console.log(result, covRes)
+  onFilesChange = async (files) => {
+    this.setState({loading: true, filePreview: files[0]['preview']['url']})
+    let formData = new FormData();
+    formData.append("mediaContent", files[0]);
+    const response = await uploadXray(this.state.data._id, formData);
+    if (response && response.data) {
+      const {data}= response;
+      this.setState({data});
+      alert(`Patient ${data.userId.name} has tested ${data.status}`);
     }
+    this.setState({loading: false});
+  }
 
-    const onFilesError = (error, file) => {
-        console.log('error code ' + error.code + ': ' + error.message)
-    };
+  onFilesError = (error, file) => {
+    console.log('error code ' + error.code + ': ' + error.message)
+  };
 
+  render() {
+    const {data, filePreview, covRes, loading} = this.state;
     return (
-        <div className="user-details__main">
-            <div className="user-details__details">
-                <div className="user-details__form">
-                    <TableContainer component={Paper}>
-                        <Table className={classes.table} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell >Address</TableCell>
-                                    <TableCell >E-mail</TableCell>
-                                    <TableCell >Gender</TableCell>
-                                    <TableCell >Phone</TableCell>
-                                    <TableCell >Result</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-
-                                <TableRow>
-                                    <TableCell component="th" scope="row">
-                                        {data.name}
-                                    </TableCell>
-                                    <TableCell >{data.address}</TableCell>
-                                    <TableCell >{data.email}</TableCell>
-                                    <TableCell >{data.sex}</TableCell>
-                                    <TableCell >{data.phone}</TableCell>
-                                    <TableCell >{covRes ||  data.result}</TableCell>
-                                    <TableCell >
-                                    </TableCell>
-                                </TableRow>
-
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-                <img src={filePreview} className="preview"/>
-            </div>
-
-            <div className="files">
-            {
-                loading && (
-                    <Loader
-                    type="Puff"
-                    color="#00BFFF"
-                    height={150}
-                    width={150}
-                    />
-                )
-            }
-            {
-                !loading && (
-                    <Files
-                    className='files-dropzone'
-                    onChange={onFilesChange}
-                    onError={onFilesError}
-                    accepts={['image/*']}
-                    multiple
-                    maxFileSize={10000000}
-                    minFileSize={0}
-                    clickable
-                >
-                    Drop files here or click to upload
-                </Files>
-                )
-            }
-
-            </div>
+      <div className="user-details__main">
+        <div className="user-details__details">
+          <div className="user-details__form">
+            <TableContainer component={Paper}>
+              <Table className={classes.table} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Address</TableCell>
+                    <TableCell>E-mail</TableCell>
+                    <TableCell>Updated At</TableCell>
+                    <TableCell>Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {
+                    data && (
+                      <TableRow>
+                        <TableCell component="th" scope="row"
+                                   style={{display: 'flex', 'alignItems': 'center'}}>
+                          <img src={data.userId?.picture} height={35} width={35}
+                               style={{borderRadius: '50%', marginRight: 8}}/>
+                          {data.userId?.name}
+                        </TableCell>
+                        <TableCell>{data.userId?.address}</TableCell>
+                        <TableCell>{data.userId?.email}</TableCell>
+                        <TableCell>{getPrintableDate(data.updatedAt)}</TableCell>
+                        <TableCell>{data.status}</TableCell>
+                      </TableRow>
+                    )
+                  }
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+          {
+            (filePreview || data?.imageUrl) && (
+              <img src={data.imageUrl || filePreview} className="preview"/>
+            )
+          }
         </div>
+        <div className="files">
+          {
+            loading && (
+              <Loader
+                type="Puff"
+                color="#00BFFF"
+                height={150}
+                width={150}
+              />
+            )
+          }
+          {
+            !loading && (data?.status ==='REQUESTED') && (
+              <Files
+                className='files-dropzone'
+                onChange={this.onFilesChange}
+                onError={this.onFilesError}
+                accepts={['image/*']}
+                multiple
+                maxFileSize={10000000}
+                minFileSize={0}
+                clickable
+              >
+                Drop X-Ray image here or click to upload
+              </Files>
+            )
+          }
+        </div>
+      </div>
     );
+  }
 }

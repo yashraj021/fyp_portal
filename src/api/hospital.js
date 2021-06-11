@@ -12,3 +12,17 @@ export const getHospitals = async (query) => {
     return false;
   }
 };
+
+
+export const getHospitalInfo = async () => {
+  try {
+    let response = await axios.get(`/hospital/info`);
+    if (validateResponseCode(response.status)) {
+      return response.data;
+    }
+    return false;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};

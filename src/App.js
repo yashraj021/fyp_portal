@@ -1,37 +1,39 @@
 import './App.css';
 import TablePage from './pages/Table-page';
-import {
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
-import { UserDetails } from './pages/User-details';
+import {Route, Switch, useHistory,} from "react-router-dom";
+import {UserDetails} from './pages/User-details';
 import Logo from './assets/logo.png'
 // import Notification from './assets/notification.png'
 import {Login} from "./pages/Login";
 import {updateAxiosToken} from "./api";
-
+import {useEffect, useState} from "react";
+import {getHospitalInfo} from "./api/hospital";
 
 
 function App() {
   const history = useHistory();
-  const token =localStorage.getItem('token');
-
-  if(!token){
+  const token = localStorage.getItem('token');
+  const [hospital, setHospital] = useState(null);
+  if (!token) {
     history.push('/auth');
-  }else{
+  } else {
     updateAxiosToken(token);
     history.push('/list')
   }
-
+  useEffect(async () => {
+      const hospitalInfo = await getHospitalInfo();
+      if (hospitalInfo) {
+        setHospital(hospitalInfo.hospital);
+      }
+    }, []
+  );
   return (
     <div className="App">
       <header className="header-main">
         <div className="title">
-          <img src={Logo} className="logo" />
+          <img src={hospital?.picture || Logo} className="logo"/>
           <span className="title_text" onClick={() => history.push('/')}>
-            St. Marry's Hospital
+            {hospital?.name || ''}
           </span>
 
         </div>
@@ -46,7 +48,7 @@ function App() {
         <Route path='/users/:id' render={props => <UserDetails {...props} />}>
         </Route>
         <Route path='/list'>
-          <TablePage />
+          <TablePage/>
         </Route>
         <Route path='/auth'>
           <Login/>

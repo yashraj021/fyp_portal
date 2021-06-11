@@ -2,6 +2,7 @@ import React from 'react';
 import {BasicTable} from '../components/Table/table';
 import './table-page.css'
 import {getTests} from "../api/user";
+import Loader from "react-loader-spinner";
 
 export default class TablePage extends React.Component {
 
@@ -24,9 +25,13 @@ export default class TablePage extends React.Component {
             </span>
         {
           this.state.patientList.length===0 && (
-            <span className="main-title">
-                No registered users
-            </span>
+            <Loader
+              type="Puff"
+              color="#00BFFF"
+              height={150}
+              width={150}
+              style={{paddingTop:'3rem'}}
+            />
           )
         }
         {

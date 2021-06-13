@@ -18,7 +18,14 @@ function App() {
     history.push('/auth');
   } else {
     updateAxiosToken(token);
-    history.push('/list')
+    history.push('/list');
+    async function a(){
+      const hospitalInfo = await getHospitalInfo();
+      if (hospitalInfo) {
+        setHospital(hospitalInfo.hospital);
+      }
+    }
+    a();
   }
   useEffect(async () => {
       const hospitalInfo = await getHospitalInfo();

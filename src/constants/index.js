@@ -1,4 +1,5 @@
-export const rootURL = "http://localhost:3001";
+// export const rootURL = "http://localhost:3001";
+export const rootURL = "http://20.102.70.100:3001";
 
 export const TEST_RESULT_STATE = {
   REQUESTED: "REQUESTED",

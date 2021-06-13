@@ -1,5 +1,4 @@
 export const getPrintableDate = (dateString) => {
-  const primitive = Date(dateString);
-  const date = new Date(primitive);
+  const date = new Date(Number(dateString));
   return date.toLocaleString();
 }
